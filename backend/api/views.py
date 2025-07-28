@@ -4,7 +4,8 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from .serializers import UserSerializer, NoteSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Note
+from .models import Note, ActionLog
+from django.core.mail import send_mail
 
 class NoteListCreate(generics.ListCreateAPIView):
     serializer_class = NoteSerializer
@@ -12,11 +13,16 @@ class NoteListCreate(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Note.objects.filter(author=user)
+        return Note.objects.filter(author=user, is_active=True)
     
     def perform_create(self, serializer):
         if serializer.is_valid():
             serializer.save(author=self.request.user)
+            ActionLog.objects.create(
+                user=self.request.user,
+                action_description=f"Created note with title: '{serializer.instance.title}'",
+                note_affected=serializer.instance
+            )
         else:
             print(serializer.errors)
 
@@ -31,10 +37,32 @@ class NoteDelete(generics.DestroyAPIView):
         instance = self.get_object()
         if instance.author != request.user:
             return Response({"error": "You are not authorized to delete this note."}, status=status.HTTP_403_FORBIDDEN)
-        self.perform_destroy(instance)
+        
+        ActionLog.objects.create(
+            user=request.user,
+            action_description=f"Soft-deleted note with title: '{instance.title}'"
+        )
+        
+        instance.is_active = False
+        instance.save()
+        
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        if response.status_code == status.HTTP_201_CREATED:
+            user_email = response.data['email']
+            user_name = response.data['username']
+            send_mail(
+                'Welcome to Our Service!',
+                f'Hi {user_name}, thank you for registering. We are excited to have you.',
+                'noreply@yourapp.com',
+                [user_email],
+                fail_silently=False,
+            )
+        return response

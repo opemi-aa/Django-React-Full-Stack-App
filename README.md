@@ -1,9 +1,18 @@
 # Django-React-Full-Stack-App
 
-This is a full-stack note-taking application.
+This is a full-stack note-taking application built with a focus on features essential for enterprise and regulated environments.
 
 *   **Backend:** A Django-based API that allows users to create, view, and delete notes. It uses Django REST Framework to expose the API endpoints and Simple JWT for token-based authentication. It's configured to use a PostgreSQL database.
 *   **Frontend:** A React application built with Vite that provides the user interface for the note-taking app. It allows users to register, log in, and then create, view, and delete their notes. It uses `axios` to communicate with the backend API and `react-router-dom` for navigation.
+
+## Key Enterprise Features
+
+This project has been enhanced with several features that are critical for applications in a professional, regulated industry like financial services:
+
+*   **Immutable Audit Trail:** Every key action (note creation, deletion) is recorded in a permanent, unchangeable `ActionLog`. This provides a complete history of activities for compliance and security reviews.
+*   **Professional Admin Interface:** A secure, built-in Django Admin panel is configured for administrators. It provides a user-friendly web interface to review the audit trail, with appropriate permissions to ensure the log cannot be altered.
+*   **Soft Delete for Data Preservation:** Notes are never permanently deleted from the database. Instead, they are marked as "inactive" (soft-deleted), preserving data history for potential audits while hiding it from the user's primary view.
+*   **Automated User Communication:** New users automatically receive a welcome email upon registration, demonstrating integration with external services and a focus on the complete user lifecycle.
 
 ## How to run it locally:
 
@@ -35,10 +44,15 @@ This is a full-stack note-taking application.
     ```bash
     python manage.py migrate
     ```
-7.  **Start the Django development server:**
+7.  **Create a superuser to access the Admin panel:**
+    ```bash
+    python manage.py createsuperuser
+    ```
+8.  **Start the Django development server:**
     ```bash
     python manage.py runserver
     ```
+    *The Admin panel is available at `http://127.0.0.1:8000/admin/`*
 
 ### Frontend (React):
 
