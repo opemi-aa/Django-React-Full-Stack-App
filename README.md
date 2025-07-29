@@ -13,6 +13,12 @@ This project has been enhanced with several features that are critical for appli
 *   **Professional Admin Interface:** A secure, built-in Django Admin panel is configured for administrators. It provides a user-friendly web interface to review the audit trail, with appropriate permissions to ensure the log cannot be altered.
 *   **Soft Delete for Data Preservation:** Notes are never permanently deleted from the database. Instead, they are marked as "inactive" (soft-deleted), preserving data history for potential audits while hiding it from the user's primary view.
 *   **Automated User Communication:** New users automatically receive a welcome email upon registration, demonstrating integration with external services and a focus on the complete user lifecycle.
+*   **API Rate Limiting:** Implemented robust rate limiting using Django REST Framework to protect API endpoints (e.g., login, registration) from abuse and ensure fair usage, critical for maintaining service availability and security.
+
+## UI/UX Enhancements
+
+*   **Intuitive Navigation Bar:** Added a global navigation bar to the frontend, providing clear links for login and registration when a user is logged out, and a logout option when authenticated. This significantly improves user experience by making core actions easily accessible.
+*   **Enhanced Registration Form:** Updated the user registration form to include an email field, aligning frontend data collection with backend requirements and improving user data completeness.
 
 ## How to run it locally:
 
